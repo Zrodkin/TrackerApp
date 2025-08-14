@@ -124,7 +124,7 @@ export const calculateSummaryStats = (personId, allAttendanceData, sections, dai
 
     const datesToProcess = Object.keys(allAttendanceData).filter(date => {
         const currentDateObj = new Date(date);
-        const currentDate = new Date(currentDateObj.valueOf() + currentDateObj.getTimezoneOffset() * 60 * 1000);
+        const currentDate = parseDateStringAsLocal(date);
         if (startDate && currentDate < startDate) return false;
         if (endDate && currentDate > endDate) return false;
         return true;
@@ -140,7 +140,7 @@ export const calculateSummaryStats = (personId, allAttendanceData, sections, dai
         sectionsForThisDay.forEach(section => {
             const [startHour, startMinute] = section.startTime.split(':').map(Number);
             const sectionTime = startHour * 60 + startMinute;
-            const isPast = new Date(date) < new Date(todayString) || (date === todayString && currentTime >= sectionTime + section.duration);
+            const isPast = parseDateStringAsLocal(date) < parseDateStringAsLocal(todayString) || (date === todayString && currentTime >= sectionTime + section.duration);
             const isActive = date === todayString && currentTime >= sectionTime && currentTime < sectionTime + section.duration;
 
             if (isPast || isActive) {
@@ -198,4 +198,10 @@ export const getPercentageColor = (percentage) => {
     if (p < 60) return 'text-red-400';
     if (p < 80) return 'text-yellow-400';
     return 'text-green-400';
+};
+
+export const parseDateStringAsLocal = (dateString) => {
+  const [year, month, day] = dateString.split('-').map(Number);
+  // Month is 0-indexed in JavaScript Date
+  return new Date(year, month - 1, day);
 };

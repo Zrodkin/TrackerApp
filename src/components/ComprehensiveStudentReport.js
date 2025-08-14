@@ -27,7 +27,7 @@ const ComprehensiveStudentReport = ({ personId, people, sections, persistentNote
         
         const datesToProcess = Object.keys(attendanceData).filter(date => {
             const currentDateObj = new Date(date);
-            const currentDate = new Date(currentDateObj.valueOf() + currentDateObj.getTimezoneOffset() * 60 * 1000);
+            const currentDate = parseDateStringAsLocal(date);
             if (startDate && currentDate < startDate) return false;
             if (endDate && currentDate > endDate) return false;
             return true;

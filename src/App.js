@@ -7,7 +7,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot, query, where, getDocs, updateDoc, deleteField, writeBatch } from 'firebase/firestore';
 
-import { formatMinutes, getTodayString, getActiveSectionId, generateId, isPersonMarkedOut, getHebrewDate, calculateSummaryStats, getPercentageColor } from './utils';
+import { formatMinutes, getTodayString, getActiveSectionId, generateId, isPersonMarkedOut, getHebrewDate, calculateSummaryStats, getPercentageColor, parseDateStringAsLocal } from './utils';
 import GroupAbsenceModal from './components/GroupAbsenceModal';
 import AbsenceManagementModal from './components/AbsenceManagementModal';
 import ReportsDashboard from './components/ReportsDashboard';
@@ -412,7 +412,7 @@ const App = () => {
         const currentTime = now.getHours() * 60 + now.getMinutes();
         const [startHour, startMinute] = section.startTime.split(':').map(Number);
         const sectionTime = startHour * 60 + startMinute;
-        const isPast = new Date(date) < new Date(todayString) || (date === todayString && currentTime >= sectionTime + section.duration);
+        const isPast = parseDateStringAsLocal(date) < parseDateStringAsLocal(todayString) || (date === todayString && currentTime >= sectionTime + section.duration);
 
         if (isPast) {
             const isAnyStudentMarked = Object.values(dailyAttendanceForDate).some(personRecords => personRecords[section.id]);
@@ -803,7 +803,7 @@ const App = () => {
                      const currentTime = now.getHours() * 60 + now.getMinutes();
                      const [startHour, startMinute] = section.startTime.split(':').map(Number);
                      const sectionTime = startHour * 60 + startMinute;
-                     const isPast = new Date(selectedDate) < new Date(todayString) || (selectedDate === todayString && currentTime >= sectionTime + section.duration);
+                     const isPast = parseDateStringAsLocal(selectedDate) < parseDateStringAsLocal(todayString) || (selectedDate === todayString && currentTime >= sectionTime + section.duration);
                     return (
                         <th key={section.id} className={`py-3.5 px-4 text-center text-sm font-semibold text-white ${section.id === currentSectionId ? 'bg-blue-900' : ''}`}>
                           <div className="flex flex-col items-center">
@@ -832,7 +832,7 @@ const App = () => {
                         const currentTime = now.getHours() * 60 + now.getMinutes();
                         const [startHour, startMinute] = section.startTime.split(':').map(Number);
                         const sectionTime = startHour * 60 + startMinute;
-                        const isPast = new Date(selectedDate) < new Date(todayString) || (selectedDate === todayString && currentTime >= sectionTime + section.duration);
+                        const isPast = parseDateStringAsLocal(selectedDate) < parseDateStringAsLocal(todayString) || (selectedDate === todayString && currentTime >= sectionTime + section.duration);
                       return (
                       <td key={section.id} className="py-2 px-2 text-sm text-gray-300 text-center">
                         <div className="flex items-center justify-center gap-2">
@@ -860,7 +860,7 @@ const App = () => {
                         const currentTime = now.getHours() * 60 + now.getMinutes();
                         const [startHour, startMinute] = section.startTime.split(':').map(Number);
                         const sectionTime = startHour * 60 + startMinute;
-                        const isPast = new Date(selectedDate) < new Date(todayString) || (selectedDate === todayString && currentTime >= sectionTime + section.duration);
+                        const isPast = parseDateStringAsLocal(selectedDate) < parseDateStringAsLocal(todayString) || (selectedDate === todayString && currentTime >= sectionTime + section.duration);
                       return (
                       <td key={section.id} className="py-2 px-2 text-sm text-gray-300 text-center">
                         <div className="flex items-center justify-center gap-2">

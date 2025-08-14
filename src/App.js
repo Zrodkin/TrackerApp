@@ -14,14 +14,15 @@ import ReportsDashboard from './components/ReportsDashboard';
 import ComprehensiveStudentReport from './components/ComprehensiveStudentReport';
 import AttendanceStatusSelector from './components/AttendanceStatusSelector';
 
+// --- Firebase Config (provided by the environment) ---
+const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
 const App = () => {
   // --- Firebase State ---
   const [db, setDb] = useState(null);
   const [auth, setAuth] = useState(null);
   const [userId, setUserId] = useState(null);
-
-  // Use a unique ID for the app, or a default
-  const appId = process.env.REACT_APP_APP_ID || 'default-app-id';
 
   // --- App State ---
   const [people, setPeople] = useState([]);
@@ -170,7 +171,10 @@ const App = () => {
   // Effect to initialize Firebase connection
   useEffect(() => {
     try {
-      const firebaseConfig = JSON.parse(process.env.REACT_APP_FIREBASE_CONFIG);
+      if (Object.keys(firebaseConfig).length === 0) {
+        console.error("Firebase config is empty. Please ensure it's provided.");
+        return;
+      }
       const app = initializeApp(firebaseConfig);
       const authInstance = getAuth(app);
       const dbInstance = getFirestore(app);
@@ -183,7 +187,7 @@ const App = () => {
           setUserId(user.uid);
         } else {
           try {
-            if (process.env.REACT_APP_INITIAL_AUTH_TOKEN) {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
               await signInWithCustomToken(authInstance, __initial_auth_token);
             } else {
               await signInAnonymously(authInstance);
@@ -195,9 +199,6 @@ const App = () => {
       });
     } catch (error) {
       console.error("Error initializing Firebase:", error);
-      if (!process.env.REACT_APP_FIREBASE_CONFIG) {
-          console.error("__firebase_config is not defined. Please set it up in your environment.");
-      }
     }
   }, []);
 

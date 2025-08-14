@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { Printer } from 'lucide-react';
 
-import { calculateSummaryStats, getPercentageColor } from '../utils';
+import { calculateSummaryStats, getPercentageColor, isPersonMarkedOut } from '../utils';
 
 const ComprehensiveStudentReport = ({ personId, people, sections, persistentNotes, attendanceData, outRecords, onBack, dailyScheduleOverrides, onPrint }) => {
     const person = people.find(p => p.id === personId);
